@@ -1,0 +1,89 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.2.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id "org.openapi.generator" version "4.2.2"
+    id 'java'
+}
+
+group = 'co.fun.code'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+ext {
+    set('springCloudVersion', "Hoxton.SR1")
+}
+
+openApiGenerate {
+    generatorName = "spring"
+    inputSpec = "$rootDir/specs/api-v1.yml"
+    outputDir = "$buildDir/generated/openapi"
+    apiPackage = "co.fun.code.funcorpchallengeservice.api"
+    invokerPackage = "co.fun.code.funcorpchallengeservice.invoker"
+    modelPackage = "co.fun.code.funcorpchallengeservice.model"
+//    modelFilesConstrainedTo = [
+//            "Error"
+//    ]
+    configOptions = [
+            dateLibrary: "java8"
+    ]
+}
+
+sourceSets {
+    getByName("main") {
+        java {
+            srcDir("$buildDir/generated/openapi/src/main/java")
+        }
+    }
+}
+
+
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-integration'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+
+    implementation('org.springframework.boot:spring-boot-starter-web') {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+    }
+    compile 'org.springframework.boot:spring-boot-starter-undertow'
+
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'org.springframework.integration:spring-integration-test'
+
+    compileOnly 'io.springfox:springfox-swagger2:2.8.0'
+    compileOnly 'io.springfox:springfox-swagger-ui:2.8.0'
+    compileOnly 'org.openapitools:jackson-databind-nullable:0.1.0'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks {
+    compileJava {
+        dependsOn 'openApiGenerate'
+    }
+}

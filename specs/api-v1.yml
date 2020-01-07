@@ -1,0 +1,112 @@
+openapi: 3.0.2
+info:
+  title: FunCode Challenge Service API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+tags:
+  - name: FeedService
+paths:
+  /feed:
+    get:
+      tags:
+        - Feed
+      summary: get feed list
+      parameters:
+        - in: query
+          name: language
+          schema:
+            type: string
+          description: feed language
+          required: false
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: limit items on page
+          required: false
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+          description: page number
+          required: false
+        - in: query
+          name: cursor
+          schema:
+            type: string
+          description: pagination cursor
+          required: false
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedResponse'
+components:
+  schemas:
+    FeedResponse:
+      title: FeedResponse
+      required:
+        - records
+      type: object
+      properties:
+        records:
+          type: array
+          $ref: '#/components/schemas/FeedRecord'
+        metadata:
+          $ref: '#/components/schemas/MetaData'
+    FeedRecord:
+      title: FeedRecord
+      type: object
+      properties:
+        id:
+          type: string
+          description: record id
+        timestamp:
+          type: integer
+          format: int64
+          description: record timestamp
+        language:
+          type: string
+          description: media language
+        media-type:
+          type: string
+          description: media type (image, video)
+        duration:
+          type: integer
+          description: media duration (seconds)
+        title:
+          type: string
+          description: media title
+        description:
+          type: string
+          description: media description
+        tags:
+          type: array
+          items:
+            type: string
+            uniqueItems: true
+          description: media tags
+        size:
+          type: integer
+          format: int64
+          description: media size in bytes
+    MetaData:
+      title: MetaData
+      type: object
+      properties:
+        cursor:
+          type: string
+          description: pagination cursor
+        page:
+          type: integer
+          description: current page
+        limit:
+          type: integer
+          description: page limit
