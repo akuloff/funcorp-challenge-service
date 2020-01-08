@@ -7,6 +7,25 @@ servers:
 tags:
   - name: FeedService
 paths:
+  /record:
+    get:
+      tags:
+        - Record
+      summary: get feed record by id
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+          description: feed record id
+          required: true
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedFeedRecord'
   /feed:
     get:
       tags:
@@ -78,6 +97,9 @@ components:
         media-type:
           type: string
           description: media type (image, video)
+        hash-code:
+          type: string
+          description: hash of record
         duration:
           type: integer
           description: media duration (seconds)
@@ -97,6 +119,40 @@ components:
           type: integer
           format: int64
           description: media size in bytes
+        thumbnail:
+          type: string
+          format: byte
+          description: base64 thumbnail
+        external-link:
+          type: string
+          format: uri
+          description: external link to media
+    ExtendedFeedRecord:
+      title: FeedRecord
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/FeedRecord'
+        - type: object
+          properties:
+            external-id:
+              type: string
+              description: external (system) record id
+            local-media-link:
+              type: string
+              format: uri
+              description: internal link to media
+            likes-count:
+              type: integer
+              description: likes counter
+            dislikes-count:
+              type: integer
+              description: dislikes counter
+            follow-counter:
+              type: integer
+              description: follow counter
+            comment-counter:
+              type: integer
+              description: total comments
     MetaData:
       title: MetaData
       type: object
