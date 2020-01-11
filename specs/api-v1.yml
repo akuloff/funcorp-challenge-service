@@ -163,12 +163,24 @@ components:
             dislikes-count:
               type: integer
               description: dislikes counter
-            follow-counter:
+            follow-count:
               type: integer
               description: follow counter
-            comment-counter:
+            comment-count:
               type: integer
               description: total comments
+            total-views:
+              type: integer
+              description: total views
+            full-text:
+              type: string
+              description: full text for media (entire post)
+            all-headers:
+              type: array
+              items:
+                type: string
+                uniqueItems: true
+              description: all media item headers
     MetaData:
       title: MetaData
       type: object
