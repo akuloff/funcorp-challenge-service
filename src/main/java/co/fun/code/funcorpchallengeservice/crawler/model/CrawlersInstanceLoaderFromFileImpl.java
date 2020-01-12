@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -22,14 +23,23 @@ public class CrawlersInstanceLoaderFromFileImpl implements ICrawlersInstanceLoad
     return Arrays.toString(Files.readAllBytes(Paths.get(fileName)));
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public List<CrawlerParams> getCrawlersInstances() throws Exception {
-    List<CrawlerParams> crawlerParams = new ArrayList<>();
+    List<CrawlerParams> paramsList = new ArrayList<>();
     String allBody = getFileContents();
     if (!StringUtils.isEmpty(allBody)) {
-      crawlerParams = new ObjectMapper().readValue(allBody, List.class);
+      ObjectMapper objectMapper = new ObjectMapper();
+      CrawlerParams[] paramsArray = objectMapper.readValue(allBody, CrawlerParams[].class);
+      paramsList = Arrays.asList(paramsArray);
     }
-    return crawlerParams;
+    HashMap<String, String> sourceMap = new HashMap<>();
+    for (CrawlerParams p: paramsList) {
+      if (sourceMap.containsKey(p.getSourceId())) {
+        throw new CrawlerException("sourceId must be unique in all crawlers!");
+      } else {
+        sourceMap.put(p.getSourceId(), p.getType());
+      }
+    }
+    return paramsList;
   }
 }
