@@ -3,5 +3,5 @@ package co.fun.code.funcorpchallengeservice.model;
 import java.util.List;
 
 public interface IFeedListStorage {
-  List<FeedRecord> getRecords(RecordSearchParams recordSearchParams);
+  List<FeedRecord> getRecords(RecordSearchParams recordSearchParams, int offset, int limit);
 }

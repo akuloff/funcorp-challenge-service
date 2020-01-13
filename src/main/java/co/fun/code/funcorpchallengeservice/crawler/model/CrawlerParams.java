@@ -16,4 +16,6 @@ public class CrawlerParams {
 
   @JsonProperty("interval")
   private long requestIntervalMsec;
+
+  private String searchQuery;
 }

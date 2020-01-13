@@ -153,10 +153,10 @@ components:
             external-id:
               type: string
               description: external (system) record id
-            local-media-link:
+            media-link-id:
               type: string
-              format: uri
-              description: internal link to media
+              format: string
+              description: storage media link id
             likes-count:
               type: integer
               description: likes counter

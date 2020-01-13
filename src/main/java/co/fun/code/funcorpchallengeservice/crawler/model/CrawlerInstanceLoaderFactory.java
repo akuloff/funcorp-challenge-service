@@ -1,5 +1,8 @@
 package co.fun.code.funcorpchallengeservice.crawler.model;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class CrawlerInstanceLoaderFactory {
   public ICrawlersInstanceLoader getLoader(String type, String link) throws Exception {
     switch (type) {
