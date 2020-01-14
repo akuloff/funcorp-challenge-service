@@ -99,7 +99,10 @@ components:
       properties:
         id:
           type: string
-          description: record id
+          description: record id (unique hash code)
+        source-name:
+          type: string
+          description: source resource name
         timestamp:
           type: integer
           format: int64

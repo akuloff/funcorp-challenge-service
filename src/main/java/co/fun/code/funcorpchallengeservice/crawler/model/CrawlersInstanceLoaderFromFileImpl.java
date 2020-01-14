@@ -2,6 +2,8 @@ package co.fun.code.funcorpchallengeservice.crawler.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.nio.file.Files;
@@ -12,10 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
+@Component
 public class CrawlersInstanceLoaderFromFileImpl implements ICrawlersInstanceLoader {
   private final String fileName;
 
-  public CrawlersInstanceLoaderFromFileImpl(String fileName) {
+  public CrawlersInstanceLoaderFromFileImpl(@Value("${crawlers.config.file}") String fileName) {
     this.fileName = fileName;
   }
 

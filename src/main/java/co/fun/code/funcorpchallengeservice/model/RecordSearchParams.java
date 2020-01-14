@@ -6,5 +6,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class RecordSearchParams {
+  private int daysInHistory;
   private PaginationParams paginationParams;
 }

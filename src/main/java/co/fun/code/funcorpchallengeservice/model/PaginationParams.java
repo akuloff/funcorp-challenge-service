@@ -7,6 +7,6 @@ import lombok.Getter;
 @Builder
 public class PaginationParams {
   private String cursor;
-  private int page;
-  private int pageLimit;
+  private int offset;
+  private int limit;
 }

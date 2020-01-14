@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrawlersParamsTests {
+public class CrawlersParamsParserTests {
 
   @Test
   public void testParamsSerializationWithAnnotationName() throws Exception {
@@ -41,7 +41,7 @@ public class CrawlersParamsTests {
     ObjectMapper mapper = new ObjectMapper();
     String jsonValue = mapper.writeValueAsString(crawlerParams);
 
-    CrawlersInstanceLoaderFromFileImpl crawlersInstanceLoaderFromFile = new CrawlersInstanceLoaderFromFileImpl("dummy"){
+    CrawlersInstanceLoaderFromFileImpl crawlersInstanceLoaderFromFile = new CrawlersInstanceLoaderFromFileImpl("dummy") {
       @Override
       protected String getFileContents() throws Exception {
         return jsonValue;
