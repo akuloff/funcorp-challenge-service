@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CrawlersParamsParserTests {
@@ -83,6 +84,33 @@ public class CrawlersParamsParserTests {
       errorText = ce.getMessage();
     }
     Assert.assertEquals(errorText, "sourceId must be unique in all crawlers!");
+  }
+
+  @Test
+  public void testMultipleParamsSerialization() throws Exception {
+    List<CrawlerParams> crawlerParams = new ArrayList<>();
+    crawlerParams.add(CrawlerParams.builder()
+      .requestIntervalMsec(2000)
+      .sourceId("giphy1")
+      .type("giphy")
+      .searchQuery("funny gifs")
+      .tags(Arrays.asList("tag1", "tag2"))
+      .language("de")
+      .maxHistoryDays(5)
+      .maxHistoryRecords(100)
+      .build());
+    crawlerParams.add(CrawlerParams.builder()
+      .requestIntervalMsec(3000)
+      .sourceId("coub1")
+      .type("coub")
+      .searchQuery("funny memes")
+      .language("de")
+      .maxHistoryDays(10)
+      .build());
+
+    ObjectMapper mapper = new ObjectMapper();
+    String jsonValue = mapper.writeValueAsString(crawlerParams);
+    Assert.assertNotNull(jsonValue);
   }
 
 

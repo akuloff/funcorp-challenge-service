@@ -49,11 +49,11 @@ paths:
           description: limit items on page
           required: false
         - in: query
-          name: page
+          name: offset
           schema:
             type: integer
-            minimum: 1
-          description: page number
+            minimum: 0
+          description: current page offset (records)
           required: false
         - in: query
           name: cursor

@@ -1,5 +1,7 @@
 package co.fun.code.funcorpchallengeservice.model;
 
+import co.fun.code.generatedservice.model.ExtendedFeedRecord;
+import co.fun.code.generatedservice.model.FeedRecord;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +25,6 @@ public class RedisFeedRecordsStorageImpl implements IFeedRecordsStorage {
   private final int redisPort;
   private Jedis jedis;
   private final ObjectMapper mapper;
-
 
   public RedisFeedRecordsStorageImpl(@Value("${redis.host:localhost}") String redisHost, @Value("${redis.port:6379}") int redisPort) {
     this.redisHost = redisHost;

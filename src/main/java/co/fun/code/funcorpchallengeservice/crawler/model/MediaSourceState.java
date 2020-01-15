@@ -10,6 +10,8 @@ public class MediaSourceState {
   private String lastRecordId;
   private long lastRecordTimestamp;
   private long lastRequestTimestamp;
-  private int lastPage;
-  private int lastPageLimit;
+  private long lastPage;
+  private long lastPageLimit;
+  private long deepScanLastId;
+  private long deepScan;
 }

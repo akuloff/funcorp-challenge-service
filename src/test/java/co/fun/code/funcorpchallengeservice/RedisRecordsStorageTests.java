@@ -1,6 +1,10 @@
 package co.fun.code.funcorpchallengeservice;
 
-import co.fun.code.funcorpchallengeservice.model.*;
+import co.fun.code.funcorpchallengeservice.model.PaginationParams;
+import co.fun.code.funcorpchallengeservice.model.RecordSearchParams;
+import co.fun.code.funcorpchallengeservice.model.RedisFeedRecordsStorageImpl;
+import co.fun.code.generatedservice.model.ExtendedFeedRecord;
+import co.fun.code.generatedservice.model.FeedRecord;
 import com.github.fppt.jedismock.RedisServer;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;

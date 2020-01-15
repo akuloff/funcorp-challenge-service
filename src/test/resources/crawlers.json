@@ -1,0 +1,35 @@
+[
+  {
+    "type": "giphy",
+    "channel": null,
+    "language": "de",
+    "tags": [
+      "tag1",
+      "tag2"
+    ],
+    "source-id": "giphy1",
+    "interval": 2000,
+    "query": "funny gifs",
+    "max-records": 100,
+    "max-days": 5,
+    "deep-scan": false,
+    "deep-scan-days": 0,
+    "deep-scan-records": 0,
+    "deep-scan-interval": 0
+  },
+  {
+    "type": "coub",
+    "channel": null,
+    "language": "de",
+    "tags": null,
+    "source-id": "coub1",
+    "interval": 3000,
+    "query": "funny memes",
+    "max-records": 0,
+    "max-days": 10,
+    "deep-scan": false,
+    "deep-scan-days": 0,
+    "deep-scan-records": 0,
+    "deep-scan-interval": 0
+  }
+]

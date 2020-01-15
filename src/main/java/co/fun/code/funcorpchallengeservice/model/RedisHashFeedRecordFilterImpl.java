@@ -1,5 +1,6 @@
 package co.fun.code.funcorpchallengeservice.model;
 
+import co.fun.code.generatedservice.model.ExtendedFeedRecord;
 import lombok.Getter;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Value;

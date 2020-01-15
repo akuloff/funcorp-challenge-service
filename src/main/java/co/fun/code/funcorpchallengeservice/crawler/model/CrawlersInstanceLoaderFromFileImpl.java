@@ -23,7 +23,7 @@ public class CrawlersInstanceLoaderFromFileImpl implements ICrawlersInstanceLoad
   }
 
   protected String getFileContents() throws Exception{
-    return Arrays.toString(Files.readAllBytes(Paths.get(fileName)));
+    return new String(Files.readAllBytes(Paths.get(fileName)));
   }
 
   @Override

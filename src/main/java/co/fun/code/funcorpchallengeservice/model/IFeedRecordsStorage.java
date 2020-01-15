@@ -1,5 +1,8 @@
 package co.fun.code.funcorpchallengeservice.model;
 
+import co.fun.code.generatedservice.model.ExtendedFeedRecord;
+import co.fun.code.generatedservice.model.FeedRecord;
+
 import java.util.List;
 
 public interface IFeedRecordsStorage {

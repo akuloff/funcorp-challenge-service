@@ -1,7 +1,7 @@
 package co.fun.code.funcorpchallengeservice;
 
-import co.fun.code.funcorpchallengeservice.model.ExtendedFeedRecord;
 import co.fun.code.funcorpchallengeservice.model.RedisHashFeedRecordFilterImpl;
+import co.fun.code.generatedservice.model.ExtendedFeedRecord;
 import com.github.fppt.jedismock.RedisServer;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;

@@ -29,9 +29,9 @@ openApiGenerate {
     generatorName = "spring"
     inputSpec = "$rootDir/specs/api-v1.yml"
     outputDir = "$buildDir/generated/openapi"
-    apiPackage = "co.fun.code.funcorpchallengeservice.api"
-    invokerPackage = "co.fun.code.funcorpchallengeservice.invoker"
-    modelPackage = "co.fun.code.funcorpchallengeservice.model"
+    apiPackage = "co.fun.code.generatedservice.api"
+    invokerPackage = "co.fun.code.generatedservice.invoker"
+    modelPackage = "co.fun.code.generatedservice.model"
 //    modelFilesConstrainedTo = [
 //            "Error"
 //    ]
