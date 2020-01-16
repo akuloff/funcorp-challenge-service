@@ -1,5 +1,6 @@
 package co.fun.code.funcorpchallengeservice;
 
+import co.fun.code.funcorpchallengeservice.crawler.model.CrawlerApiConnection;
 import co.fun.code.funcorpchallengeservice.crawler.model.CrawlerException;
 import co.fun.code.funcorpchallengeservice.crawler.model.CrawlerParams;
 import co.fun.code.funcorpchallengeservice.crawler.model.CrawlersInstanceLoaderFromFileImpl;
@@ -12,6 +13,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CrawlersParamsParserTests {
+  private String jsonValue;
+  private CrawlersInstanceLoaderFromFileImpl crawlersInstanceLoaderFromFile = new CrawlersInstanceLoaderFromFileImpl("dummy") {
+    @Override
+    protected String getConfigBody() throws Exception {
+      return jsonValue;
+    }
+  };
 
   @Test
   public void testParamsSerializationWithAnnotationName() throws Exception {
@@ -40,14 +48,7 @@ public class CrawlersParamsParserTests {
       .build());
 
     ObjectMapper mapper = new ObjectMapper();
-    String jsonValue = mapper.writeValueAsString(crawlerParams);
-
-    CrawlersInstanceLoaderFromFileImpl crawlersInstanceLoaderFromFile = new CrawlersInstanceLoaderFromFileImpl("dummy") {
-      @Override
-      protected String getFileContents() throws Exception {
-        return jsonValue;
-      }
-    };
+    jsonValue = mapper.writeValueAsString(crawlerParams);
 
     List<CrawlerParams> parsedParams = crawlersInstanceLoaderFromFile.getCrawlersInstances();
     Assert.assertEquals(2, parsedParams.size());
@@ -68,14 +69,7 @@ public class CrawlersParamsParserTests {
       .build());
 
     ObjectMapper mapper = new ObjectMapper();
-    String jsonValue = mapper.writeValueAsString(crawlerParams);
-
-    CrawlersInstanceLoaderFromFileImpl crawlersInstanceLoaderFromFile = new CrawlersInstanceLoaderFromFileImpl("dummy"){
-      @Override
-      protected String getFileContents() throws Exception {
-        return jsonValue;
-      }
-    };
+    jsonValue = mapper.writeValueAsString(crawlerParams);
 
     String errorText = "";
     try {
@@ -98,6 +92,9 @@ public class CrawlersParamsParserTests {
       .language("de")
       .maxHistoryDays(5)
       .maxHistoryRecords(100)
+      .apiConnection(CrawlerApiConnection.builder()
+        .apiKey("apikey123")
+        .build())
       .build());
     crawlerParams.add(CrawlerParams.builder()
       .requestIntervalMsec(3000)
@@ -106,11 +103,38 @@ public class CrawlersParamsParserTests {
       .searchQuery("funny memes")
       .language("de")
       .maxHistoryDays(10)
+      .apiConnection(CrawlerApiConnection.builder()
+        .apiKey("apikey333")
+        .userName("coubUser123")
+        .userPasswd("$userpass2")
+        .build())
       .build());
 
     ObjectMapper mapper = new ObjectMapper();
-    String jsonValue = mapper.writeValueAsString(crawlerParams);
+    jsonValue = mapper.writeValueAsString(crawlerParams);
     Assert.assertNotNull(jsonValue);
+  }
+
+  @Test
+  public void testThatApiParamsValuesFromEnvironmentVariables() throws Exception {
+    List<CrawlerParams> crawlerParams = new ArrayList<>();
+    crawlerParams.add(CrawlerParams.builder()
+      .requestIntervalMsec(3000)
+      .sourceId("coub2")
+      .type("coub")
+      .searchQuery("funny memes")
+      .language("de")
+      .maxHistoryDays(10)
+      .apiConnection(CrawlerApiConnection.builder()
+        .userName("$username1")
+        .userPasswd("$userpass1")
+        .build())
+      .build());
+    ObjectMapper mapper = new ObjectMapper();
+    jsonValue = mapper.writeValueAsString(crawlerParams);
+    System.setProperty("username1", "env_username");
+    List<CrawlerParams> parsedParams = crawlersInstanceLoaderFromFile.getCrawlersInstances();
+    Assert.assertEquals("env_username", parsedParams.get(0).getApiConnection().getUserName());
   }
 
 

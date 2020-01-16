@@ -79,4 +79,5 @@ public class RedisRecordsStorageTests {
     List<FeedRecord> recordList = s2.getRecords(searchParams);
     Assert.assertEquals(2, recordList.size());
   }
+
 }

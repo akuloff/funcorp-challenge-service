@@ -47,4 +47,5 @@ public class FeedRecordFilterTests {
   }
 
   //TODO add thumbnail tests
+  //TODO add media duration test
 }

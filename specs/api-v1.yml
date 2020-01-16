@@ -26,6 +26,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExtendedFeedRecord'
+  /media:
+    get:
+      tags:
+        - Media
+      summary: get media body by link id
+      parameters:
+        - in: query
+          name: linkid
+          schema:
+            type: string
+          description: media link id
+          required: true
+      responses:
+        200:
+          description: ok
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
   /feed:
     get:
       tags:
@@ -153,6 +173,9 @@ components:
         - $ref: '#/components/schemas/FeedRecord'
         - type: object
           properties:
+            external-date:
+              type: string
+              description: external system date
             external-id:
               type: string
               description: external (system) record id

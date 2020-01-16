@@ -15,7 +15,13 @@
     "deep-scan": false,
     "deep-scan-days": 0,
     "deep-scan-records": 0,
-    "deep-scan-interval": 0
+    "deep-scan-interval": 0,
+    "api-connection": {
+      "api-key": "apikey123",
+      "client-id": null,
+      "user-name": null,
+      "user-passwd": null
+    }
   },
   {
     "type": "coub",
@@ -30,6 +36,12 @@
     "deep-scan": false,
     "deep-scan-days": 0,
     "deep-scan-records": 0,
-    "deep-scan-interval": 0
+    "deep-scan-interval": 0,
+    "api-connection": {
+      "api-key": "apikey333",
+      "client-id": null,
+      "user-name": "coubUser123",
+      "user-passwd": "$userpass2"
+    }
   }
 ]

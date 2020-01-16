@@ -39,4 +39,7 @@ public class CrawlerParams {
   private long deepScanRecords;
   @JsonProperty("deep-scan-interval")
   private long deepScanInterval;
+
+  @JsonProperty("api-connection")
+  private CrawlerApiConnection apiConnection;
 }

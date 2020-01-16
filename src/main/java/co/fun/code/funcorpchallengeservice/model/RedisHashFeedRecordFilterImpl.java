@@ -41,7 +41,7 @@ public class RedisHashFeedRecordFilterImpl implements IFeedRecordFilter {
   @Override
   public boolean filtered(ExtendedFeedRecord record) {
     boolean filtered;
-    if (record.getDuration() > maxMediaDurationSec ) {
+    if (record.getDuration() != null && record.getDuration() > maxMediaDurationSec ) {
       filtered = false;
     } else {
       String hashValue = "";
