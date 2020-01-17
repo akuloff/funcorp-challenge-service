@@ -9,6 +9,7 @@ import co.fun.code.funcorpchallengeservice.model.IFeedRecordsStorage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.direct.DirectConsumerNotAvailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
@@ -50,11 +51,22 @@ public class CrawlersMainRouteBuilder extends RouteBuilder {
     log.info("loaded crawler instances, count: {}", crawlerParamsList.size());
 
     for (CrawlerParams params : crawlerParamsList) {
-      log.info("params: {}", params);
+      log.info("create crawler route, params: {}", params);
       if (params.getRequestIntervalMsec() > 0 && !StringUtils.isEmpty(params.getSourceId())) {
         from(String.format("timer?period=%s", params.getRequestIntervalMsec()))
-          .log(LoggingLevel.INFO, String.format("timer routine for crawler id: %s", params.getSourceId()))
-          .toD("processing-", true);
+          .log(LoggingLevel.INFO, String.format("start timer routine for crawler id: %s", params.getSourceId()))
+          .setHeader(HeadersDefinition.MEDIA_SOURCE_ID, constant(params.getSourceId()))
+          .process(exchange -> {
+            log.info("pre processing, headers: {}", exchange.getIn().getHeaders());
+          })
+          .doTry()
+            .to("direct:get-media-source-params")
+            .toD(String.format("direct:perform-request-%s", params.getType()), false)
+            .to("direct:save-media-source-params")
+          .doCatch(DirectConsumerNotAvailableException.class)
+            .log(LoggingLevel.INFO, String.format("not found processing route for crawler type: %s, id: %s", params.getType(), params.getSourceId()))
+          .end();
+
       }
     }
 

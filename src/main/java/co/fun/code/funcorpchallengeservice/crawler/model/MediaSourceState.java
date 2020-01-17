@@ -1,13 +1,18 @@
 package co.fun.code.funcorpchallengeservice.crawler.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MediaSourceState {
   private String id;
   private String lastRecordId;
+  private long lastCallTimestamp;
   private long lastRecordTimestamp;
   private long lastRequestTimestamp;
   private long lastPage;

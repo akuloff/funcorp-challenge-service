@@ -17,16 +17,19 @@ public class GiphyCrawlerJsonTests {
   private static ObjectMapper mapper;
 
   @BeforeAll
-  public static void init(){
+  public static void init() {
     resourceLoader = new DefaultResourceLoader();
     mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
   @Test
-  public void testThatJsonResponseParsed() throws Exception{
+  public void testThatJsonResponseParsed() throws Exception {
     Resource resource = resourceLoader.getResource("classpath:giphy-sample-search-1.json");
     String fileBody = getStringFromStream(resource.getInputStream());
     GiphySearchResponse response = mapper.readValue(fileBody, GiphySearchResponse.class);
     Assert.assertEquals("c5e71e263c475beb7ad3635e6a129ceaa6034de7", response.getMeta().getResponseId());
+    Assert.assertEquals(25, response.getData().size());
+    Assert.assertEquals("qaaSZMnWkufRu", response.getData().get(0).getId());
   }
+
 }
