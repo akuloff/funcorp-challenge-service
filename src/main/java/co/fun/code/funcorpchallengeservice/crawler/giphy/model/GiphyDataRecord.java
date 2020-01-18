@@ -11,5 +11,9 @@ public class GiphyDataRecord {
   @JsonProperty("trending_datetime")
   private String trendingDatetime;
 
+  @JsonProperty("import_datetime")
+  private String importDatetime;
+
   private String title;
+  private GiphyImages images;
 }

@@ -1,9 +1,6 @@
 package co.fun.code.funcorpchallengeservice;
 
-import co.fun.code.funcorpchallengeservice.crawler.model.CrawlerApiConnection;
-import co.fun.code.funcorpchallengeservice.crawler.model.CrawlerException;
-import co.fun.code.funcorpchallengeservice.crawler.model.CrawlerParams;
-import co.fun.code.funcorpchallengeservice.crawler.model.CrawlersInstanceLoaderFromFileImpl;
+import co.fun.code.funcorpchallengeservice.crawler.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -14,7 +11,8 @@ import java.util.List;
 
 public class CrawlersParamsParserTests {
   private String jsonValue;
-  private CrawlersInstanceLoaderFromFileImpl crawlersInstanceLoaderFromFile = new CrawlersInstanceLoaderFromFileImpl("dummy") {
+  private ICrawlerInstanceStorer storer = new MapCrawlerInstanceStorerImpl();
+  private CrawlersInstanceLoaderFromFileImpl crawlersInstanceLoaderFromFile = new CrawlersInstanceLoaderFromFileImpl(storer, "dummy") {
     @Override
     protected String getConfigBody() throws Exception {
       return jsonValue;
@@ -49,8 +47,8 @@ public class CrawlersParamsParserTests {
 
     ObjectMapper mapper = new ObjectMapper();
     jsonValue = mapper.writeValueAsString(crawlerParams);
-
-    List<CrawlerParams> parsedParams = crawlersInstanceLoaderFromFile.getCrawlersInstances();
+    crawlersInstanceLoaderFromFile.load();
+    List<CrawlerParams> parsedParams = storer.getAllParams();
     Assert.assertEquals(2, parsedParams.size());
   }
 
@@ -73,7 +71,8 @@ public class CrawlersParamsParserTests {
 
     String errorText = "";
     try {
-      List<CrawlerParams> parsedParams = crawlersInstanceLoaderFromFile.getCrawlersInstances();
+      crawlersInstanceLoaderFromFile.load();
+      //List<CrawlerParams> parsedParams = storer.getAllParams();
     } catch (CrawlerException ce) {
       errorText = ce.getMessage();
     }
@@ -133,7 +132,8 @@ public class CrawlersParamsParserTests {
     ObjectMapper mapper = new ObjectMapper();
     jsonValue = mapper.writeValueAsString(crawlerParams);
     System.setProperty("username1", "env_username");
-    List<CrawlerParams> parsedParams = crawlersInstanceLoaderFromFile.getCrawlersInstances();
+    crawlersInstanceLoaderFromFile.load();
+    List<CrawlerParams> parsedParams = storer.getAllParams();
     Assert.assertEquals("env_username", parsedParams.get(0).getApiConnection().getUserName());
   }
 

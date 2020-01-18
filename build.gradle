@@ -76,6 +76,11 @@ dependencies {
     compile group: 'redis.clients', name: 'jedis', version: '3.2.0'
     testImplementation('com.github.fppt:jedis-mock:0.1.16')
     compile group: 'commons-codec', name: 'commons-codec', version: '1.13'
+
+    // Camel
+    compile "org.apache.camel:camel-core:$camelVersion"
+    compile "org.apache.camel:camel-http:$camelVersion"
+    compile "org.apache.camel:camel-http-common:$camelVersion"
 }
 
 dependencyManagement {

@@ -7,15 +7,19 @@ import org.springframework.util.StringUtils;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
-public abstract class AbstractCrawlersInstanceLoader implements ICrawlersInstanceLoader {
+public abstract class DefaultCrawlersInstanceLoader implements ICrawlersInstanceLoader {
   protected abstract String getConfigBody() throws Exception;
+  private final ICrawlerInstanceStorer storer;
+
+  public DefaultCrawlersInstanceLoader(ICrawlerInstanceStorer storer) {
+    this.storer = storer;
+  }
 
   @Override
-  public List<CrawlerParams> getCrawlersInstances() throws Exception {
+  public void load() throws Exception {
     List<CrawlerParams> paramsList = new ArrayList<>();
     String allBody = getConfigBody();
     log.debug("config body: {}", allBody);
@@ -24,12 +28,10 @@ public abstract class AbstractCrawlersInstanceLoader implements ICrawlersInstanc
       CrawlerParams[] paramsArray = objectMapper.readValue(allBody, CrawlerParams[].class);
       paramsList = Arrays.asList(paramsArray);
 
-      HashMap<String, String> sourceMap = new HashMap<>();
       for (CrawlerParams p : paramsList) {
-        if (sourceMap.containsKey(p.getSourceId())) {
+        if (storer.isContains(p.getSourceId())) {
           throw new CrawlerException("sourceId must be unique in all crawlers!");
         } else {
-          sourceMap.put(p.getSourceId(), p.getType());
           CrawlerApiConnection apiConnection = p.getApiConnection();
           if (apiConnection != null) {
             Field[] fields = CrawlerApiConnection.class.getDeclaredFields();
@@ -47,10 +49,9 @@ public abstract class AbstractCrawlersInstanceLoader implements ICrawlersInstanc
               }
             }
           }
+          storer.addParams(p);
         }
       }
-
     }
-    return paramsList;
   }
 }

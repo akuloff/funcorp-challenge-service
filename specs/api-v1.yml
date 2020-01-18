@@ -183,6 +183,8 @@ components:
               type: string
               format: string
               description: storage media link id
+            media-stored:
+              type: boolean
             likes-count:
               type: integer
               description: likes counter
@@ -202,10 +204,7 @@ components:
               type: string
               description: full text for media (entire post)
             all-headers:
-              type: array
-              items:
-                type: string
-                uniqueItems: true
+              type: string
               description: all media item headers
     MetaData:
       title: MetaData
