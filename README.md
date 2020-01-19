@@ -6,9 +6,10 @@
 
 
 REDIS_HOST  (хост Redis, по умолчанию localhost)
-REDIS_PORT  (порт Redis, по умолчанию )
 
-SERVER_PORT (порт для REST сервисов)
+REDIS_PORT  (порт Redis, по умолчанию 6379)
+
+SERVER_PORT (порт для REST сервисов, по умолчанию 8080)
  
 CREATE_CRAWLERS=true (флаг инициализации сборщиков media контента, если выключен, то сервис будет работать только как REST)
 
