@@ -1,4 +1,4 @@
-package co.fun.code.funcorpchallengeservice.crawler.camel;
+package co.fun.code.funcorpchallengeservice.crawler.strategy;
 
 import java.util.Arrays;
 

@@ -65,7 +65,7 @@ public class RedisFeedRecordsStorageImpl extends JedisPooledConnector implements
     } else if (days >= 300) {
       days = 300;
     }
-    long maxtime = System.currentTimeMillis();
+    long maxtime = searchParams.getFromTimestamp() > 0 ? searchParams.getFromTimestamp() : System.currentTimeMillis();
     long mintime = maxtime - days * 86400L * 1000L;
     Jedis jedis = getJedis();
     Set<String> result = jedis.zrevrangeByScore(RECORDS_SET, maxtime, mintime, offset, limit);

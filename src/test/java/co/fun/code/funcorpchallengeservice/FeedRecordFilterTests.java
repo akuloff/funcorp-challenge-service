@@ -28,6 +28,7 @@ public class FeedRecordFilterTests {
   @Test
   public void testThatIfRecordWithIdNotPresentInStorageThenFiltered() throws Exception{
     ExtendedFeedRecord feedRecord = new ExtendedFeedRecord();
+    feedRecord.setMediaLinkId("l123");
     feedRecord.setId("filterRecordId1");
     feedRecord.setTimestamp(System.currentTimeMillis());
     feedRecord.setDescription("filter test record");
@@ -38,6 +39,7 @@ public class FeedRecordFilterTests {
   @Test
   public void testThatIfRecordWithIdIsPresentInStorageThenNotFiltered() throws Exception{
     ExtendedFeedRecord feedRecord = new ExtendedFeedRecord();
+    feedRecord.setMediaLinkId("l123");
     feedRecord.setId("filterRecordId2");
     feedRecord.setTimestamp(System.currentTimeMillis());
     feedRecord.setDescription("filter test record 2");

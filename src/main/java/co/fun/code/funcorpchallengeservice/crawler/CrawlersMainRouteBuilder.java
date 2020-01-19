@@ -1,7 +1,7 @@
 package co.fun.code.funcorpchallengeservice.crawler;
 
-import co.fun.code.funcorpchallengeservice.crawler.camel.MergeAggregationStrategy;
 import co.fun.code.funcorpchallengeservice.crawler.model.*;
+import co.fun.code.funcorpchallengeservice.crawler.strategy.MergeAggregationStrategy;
 import co.fun.code.funcorpchallengeservice.model.IFeedRecordFilter;
 import co.fun.code.funcorpchallengeservice.model.IFeedRecordsStorage;
 import co.fun.code.funcorpchallengeservice.model.IMediaStorage;

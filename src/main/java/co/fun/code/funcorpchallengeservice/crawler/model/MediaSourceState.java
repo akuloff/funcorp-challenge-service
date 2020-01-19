@@ -19,4 +19,5 @@ public class MediaSourceState {
   private long lastPageLimit;
   private long deepScanLastId;
   private long deepScan;
+  private long totalRecords;
 }

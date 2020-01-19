@@ -91,7 +91,14 @@ paths:
           name: since-timestamp
           schema:
             type: integer
+            format: int64
           description: last timestamp for fetch
+          required: false
+        - in: query
+          name: days-in-history
+          schema:
+            type: integer
+          description: days in history
           required: false
       responses:
         200:
@@ -110,7 +117,8 @@ components:
       properties:
         records:
           type: array
-          $ref: '#/components/schemas/FeedRecord'
+          items:
+            $ref: '#/components/schemas/FeedRecord'
         metadata:
           $ref: '#/components/schemas/MetaData'
     FeedRecord:
