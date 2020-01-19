@@ -52,7 +52,7 @@ sourceSets {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-integration'
-    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+//    implementation 'org.springframework.cloud:spring-cloud-starter-config'
 
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
@@ -81,6 +81,8 @@ dependencies {
     compile "org.apache.camel:camel-core:$camelVersion"
     compile "org.apache.camel:camel-http:$camelVersion"
     compile "org.apache.camel:camel-http-common:$camelVersion"
+
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
 }
 
 dependencyManagement {

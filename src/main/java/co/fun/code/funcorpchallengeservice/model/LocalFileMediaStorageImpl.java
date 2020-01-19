@@ -1,10 +1,13 @@
 package co.fun.code.funcorpchallengeservice.model;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 @Component
 public class LocalFileMediaStorageImpl implements IMediaStorage {
@@ -35,4 +38,20 @@ public class LocalFileMediaStorageImpl implements IMediaStorage {
     return type;
   }
 
+  @Override
+  public void storeMediaContent(String mediaLink, InputStream is) throws Exception {
+    String fullPath = localPath + mediaLink;
+    FileOutputStream os = new FileOutputStream(fullPath);
+    IOUtils.copy(is, os);
+    is.close();
+    os.close();
+  }
+
+  @Override
+  public void storeMediaContent(String mediaLink, String body) throws Exception {
+    String fullPath = localPath + mediaLink;
+    FileOutputStream os = new FileOutputStream(fullPath);
+    os.write(body.getBytes());
+    os.close();
+  }
 }

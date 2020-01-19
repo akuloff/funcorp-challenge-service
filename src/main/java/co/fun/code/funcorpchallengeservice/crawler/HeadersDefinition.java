@@ -8,4 +8,5 @@ public class HeadersDefinition {
   public static final String FEED_MESSAGE_URL = CRAWLERS_PREFIX + "feed.message.url";
   public static final String FEED_RECORD_ID = CRAWLERS_PREFIX + "feed.record.id";
   public static final String FEED_RECORD_FILTERED = CRAWLERS_PREFIX + "feed.record.filtered";
+  public static final String FEED_RECORD_BODY = CRAWLERS_PREFIX + "feed.record.body";
 }

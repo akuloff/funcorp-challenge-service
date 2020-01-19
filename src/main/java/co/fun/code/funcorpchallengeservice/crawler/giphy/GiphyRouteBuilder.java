@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.net.URI;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,17 +35,26 @@ public class GiphyRouteBuilder extends RouteBuilder {
   private ICrawlerInstanceStorer crawlerInstanceStorer;
 
   private ExtendedFeedRecord feedRecordFromData(Exchange exchange, CrawlerParams crawlerParams, GiphyDataRecord dataRecord) throws Exception{
-    String linkUrl = String.format("https://i.giphy.com/%s.gif", dataRecord.getId());
+    String linkUrl = String.format("http://i.giphy.com/%s.gif", dataRecord.getId());
+
+    long recordTimestamp = System.currentTimeMillis();
+    String trendingDatetime = dataRecord.getTrendingDatetime();
+    if (!StringUtils.isEmpty(trendingDatetime) && !"0000-00-00 00:00:00".equals(trendingDatetime)) {
+      recordTimestamp = new SimpleDateFormat("yyy-MM-dd HH:mm:ss").parse(trendingDatetime).getTime();
+    }
+
     ExtendedFeedRecord record = new ExtendedFeedRecord();
-    record.setId(dataRecord.getId());
+    String recordId = crawlerParams.getType() + "_" + dataRecord.getId();
+    record.setId(recordId);
     record.setExternalId(dataRecord.getId());
     record.setTitle(dataRecord.getTitle());
     record.setLanguage(crawlerParams.getLanguage());
     record.setAllHeaders(mapper.writeValueAsString(exchange.getIn().getHeaders()));
     record.setSourceName(crawlerParams.getType());
     record.setMediaType(MediaType.IMAGE_GIF.name());
+    record.setMediaLinkId(recordId + ".gif");
     record.setMediaStored(false);
-    record.setTimestamp(System.currentTimeMillis());
+    record.setTimestamp(recordTimestamp);
     record.setExternalLink(new URI(linkUrl));
     return record;
   }
