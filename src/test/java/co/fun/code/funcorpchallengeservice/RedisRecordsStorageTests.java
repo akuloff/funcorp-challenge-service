@@ -17,12 +17,19 @@ import java.util.List;
 public class RedisRecordsStorageTests {
   private static RedisServer redisServer;
   private static RedisFeedRecordsStorageImpl storage;
+  private static Jedis jedis;
 
   @BeforeAll
   public static void start() throws Exception {
     redisServer = RedisServer.newRedisServer(16379);
     redisServer.start();
-    storage = new RedisFeedRecordsStorageImpl(redisServer.getHost(), redisServer.getBindPort());
+    jedis = new Jedis(redisServer.getHost(), redisServer.getBindPort());
+    storage = new RedisFeedRecordsStorageImpl(redisServer.getHost(), redisServer.getBindPort()) {
+      @Override
+      public Jedis getJedis() {
+        return jedis;
+      }
+    };
     storage.init();
   }
 
@@ -33,7 +40,6 @@ public class RedisRecordsStorageTests {
 
   @Test
   public void testThatJedisEngineWorks() {
-    Jedis jedis = new Jedis(redisServer.getHost(), redisServer.getBindPort());
     jedis.set("key1", "value1");
     String result = jedis.get("key1");
     Assert.assertEquals("value1", result);

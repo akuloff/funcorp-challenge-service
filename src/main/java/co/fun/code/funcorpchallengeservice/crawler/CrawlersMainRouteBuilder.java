@@ -3,6 +3,7 @@ package co.fun.code.funcorpchallengeservice.crawler;
 import co.fun.code.funcorpchallengeservice.crawler.model.*;
 import co.fun.code.funcorpchallengeservice.model.IFeedRecordFilter;
 import co.fun.code.funcorpchallengeservice.model.IFeedRecordsStorage;
+import co.fun.code.generatedservice.model.ExtendedFeedRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+
+import static co.fun.code.funcorpchallengeservice.crawler.HeadersDefinition.*;
 
 @Component
 @Order(1000)
@@ -59,17 +62,29 @@ public class CrawlersMainRouteBuilder extends RouteBuilder {
     log.info("loaded crawler instances, count: {}", crawlerParamsList.size());
 
     from(String.format("seda:records-to-store?size=%s&concurrentConsumers=%s", sedaQueueSize, sedaConcurrentConsumers))
-      .log(LoggingLevel.INFO, "processing message: ${body}")
+      .log(LoggingLevel.INFO, String.format("processing message, url: ${headers.%s}", FEED_MESSAGE_URL))
       .delay(2000);
 
     from("direct:send-records-list-to-storage")
       .split(body())
-      .to(String.format("seda:records-to-store?size=%s&blockWhenFull=true", sedaQueueSize));
+      .process(exchange -> {
+        ExtendedFeedRecord feedRecord = exchange.getIn().getBody(ExtendedFeedRecord.class);
+        exchange.getIn().setHeader(FEED_RECORD_ID, feedRecord.getId());
+        exchange.getIn().setHeader(FEED_RECORD_FILTERED, filter.filtered(feedRecord));
+      })
+      .choice()
+      .when(header(FEED_RECORD_FILTERED))
+        .to(String.format("seda:records-to-store?size=%s&blockWhenFull=true", sedaQueueSize))
+      .endChoice()
+      .otherwise()
+        .log(LoggingLevel.INFO, String.format("record not filtered, id: ${headers.%s}", FEED_RECORD_ID))
+      .end();
 
     for (CrawlerParams params : crawlerParamsList) {
       log.info("create crawler route, params: {}", params);
       if (params.getRequestIntervalMsec() > 0 && !StringUtils.isEmpty(params.getSourceId())) {
-        from(String.format("timer?period=%s", params.getRequestIntervalMsec()))
+        long delay = params.getStartDelayMsec() >= 0 ? params.getStartDelayMsec() : 0;
+        from(String.format("timer?period=%s&repeatCount=1&delay=%s", params.getRequestIntervalMsec(), delay))
           .log(LoggingLevel.INFO, String.format("start timer routine for crawler id: %s", params.getSourceId()))
           .setHeader(HeadersDefinition.MEDIA_SOURCE_ID, constant(params.getSourceId()))
           .process(exchange -> {

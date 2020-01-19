@@ -1,5 +1,6 @@
 package co.fun.code.funcorpchallengeservice.crawler.model;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
@@ -24,7 +25,7 @@ public abstract class DefaultCrawlersInstanceLoader implements ICrawlersInstance
     String allBody = getConfigBody();
     log.debug("config body: {}", allBody);
     if (!StringUtils.isEmpty(allBody)) {
-      ObjectMapper objectMapper = new ObjectMapper();
+      ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
       CrawlerParams[] paramsArray = objectMapper.readValue(allBody, CrawlerParams[].class);
       paramsList = Arrays.asList(paramsArray);
 

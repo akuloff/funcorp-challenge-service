@@ -76,10 +76,16 @@ public class GiphyRouteBuilder extends RouteBuilder {
                 .build();
               msg.setHeader(HeadersDefinition.MEDIA_SOURCE_STATE, mediaSourceState);
             }
-            String requestUrl = String.format("%s?api_key=%s&q=%s&lang=%s", API_URL,
-              crawlerParams.getApiConnection().getApiKey(), crawlerParams.getSearchQuery(), crawlerParams.getLanguage());
-            msg.setHeader(FULL_REQUEST_URL, requestUrl);
-            doProcess = true;
+            if (crawlerParams.getApiConnection() != null) {
+              String apiUrl = API_URL;
+              if (!StringUtils.isEmpty(crawlerParams.getApiConnection().getApiUrl())) {
+                apiUrl = crawlerParams.getApiConnection().getApiUrl();
+              }
+              String requestUrl = String.format("%s?api_key=%s&q=%s&lang=%s", apiUrl,
+                crawlerParams.getApiConnection().getApiKey(), crawlerParams.getSearchQuery(), crawlerParams.getLanguage());
+              msg.setHeader(FULL_REQUEST_URL, requestUrl);
+              doProcess = true;
+            }
           } else {
             log.warn("can not read crawler params from storer, sourceId: {}", sourceId);
           }
@@ -89,20 +95,20 @@ public class GiphyRouteBuilder extends RouteBuilder {
       })
       .choice()
         .when(header(DO_PROCESS))
-        .log(LoggingLevel.INFO, "send request to Giphy ...")
-        .toD(String.format("${headers.%s}", FULL_REQUEST_URL))
-        .convertBodyTo(String.class)
-        .process(exchange -> {
-          CrawlerParams crawlerParams = crawlerInstanceStorer.getParams(exchange.getIn().getHeader(HeadersDefinition.MEDIA_SOURCE_ID, String.class));
-          String bodyString = exchange.getIn().getBody(String.class);
-          GiphySearchResponse response = mapper.readValue(bodyString, GiphySearchResponse.class);
-          List<ExtendedFeedRecord> recordList = new ArrayList<>();
-          for (GiphyDataRecord data : response.getData()) {
-            recordList.add(feedRecordFromData(exchange, crawlerParams, data));
-          }
-          exchange.getIn().setBody(recordList);
-        })
-        .to("direct:send-records-list-to-storage")
+          .log(LoggingLevel.INFO, "send request to Giphy ...")
+          .toD(String.format("${headers.%s}", FULL_REQUEST_URL))
+          .convertBodyTo(String.class)
+          .process(exchange -> {
+            CrawlerParams crawlerParams = crawlerInstanceStorer.getParams(exchange.getIn().getHeader(HeadersDefinition.MEDIA_SOURCE_ID, String.class));
+            String bodyString = exchange.getIn().getBody(String.class);
+            GiphySearchResponse response = mapper.readValue(bodyString, GiphySearchResponse.class);
+            List<ExtendedFeedRecord> recordList = new ArrayList<>();
+            for (GiphyDataRecord data : response.getData()) {
+              recordList.add(feedRecordFromData(exchange, crawlerParams, data));
+            }
+            exchange.getIn().setBody(recordList);
+          })
+          .to("direct:send-records-list-to-storage")
       .endChoice()
       .otherwise()
         .log(LoggingLevel.INFO, "not processing request to Giphy")

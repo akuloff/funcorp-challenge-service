@@ -6,35 +6,28 @@ import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import redis.clients.jedis.Jedis;
 
 import javax.annotation.PostConstruct;
 import java.security.MessageDigest;
 import java.util.Arrays;
 
 @Component
-public class RedisHashFeedRecordFilterImpl implements IFeedRecordFilter {
+public class RedisHashFeedRecordFilterImpl extends JedisPooledConnector implements IFeedRecordFilter {
   private final int maxMediaDurationSec = 300; //max 5 min
-  private final String redisHost;
-  private final int redisPort;
 
   @Getter
   private final boolean fastHash;
 
-  @Getter
-  private Jedis jedis;
-
   private MessageDigest digest;
 
   public RedisHashFeedRecordFilterImpl(@Value("${redis.host:localhost}") String redisHost, @Value("${redis.port:6379}") int redisPort, @Value("${filter.use.fast.hash}") boolean fastHash) {
-    this.redisHost = redisHost;
-    this.redisPort = redisPort;
+    super(redisHost, redisPort);
     this.fastHash = fastHash;
   }
 
   @PostConstruct
   public void init() throws Exception {
-    jedis = new Jedis(redisHost, redisPort);
+    super.init();
     digest = MessageDigest.getInstance("SHA-256");
   }
 
@@ -57,7 +50,7 @@ public class RedisHashFeedRecordFilterImpl implements IFeedRecordFilter {
         hashValue = record.getId();
       }
       if (!StringUtils.isEmpty(hashValue)) {
-        filtered = !jedis.exists(hashValue);
+        filtered = !getJedis().exists(hashValue);
       } else {
         filtered = false;
       }

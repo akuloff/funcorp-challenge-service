@@ -20,4 +20,7 @@ public class CrawlerApiConnection {
 
   @JsonProperty("user-passwd")
   private String userPasswd;
+
+  @JsonProperty("api-url")
+  private String apiUrl;
 }

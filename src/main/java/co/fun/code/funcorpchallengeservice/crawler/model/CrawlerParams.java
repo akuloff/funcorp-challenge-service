@@ -15,6 +15,9 @@ public class CrawlerParams {
   @JsonProperty("source-id")
   private String sourceId;
 
+  @JsonProperty("start-delay")
+  private long startDelayMsec;
+
   @JsonProperty("interval")
   private long requestIntervalMsec;
 
