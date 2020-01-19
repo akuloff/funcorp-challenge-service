@@ -1,6 +1,9 @@
 package co.fun.code.funcorpchallengeservice.crawler;
 
-import co.fun.code.funcorpchallengeservice.crawler.model.*;
+import co.fun.code.funcorpchallengeservice.crawler.model.CrawlerParams;
+import co.fun.code.funcorpchallengeservice.crawler.model.ICrawlerInstanceLoaderFactory;
+import co.fun.code.funcorpchallengeservice.crawler.model.ICrawlerInstanceStorer;
+import co.fun.code.funcorpchallengeservice.crawler.model.ICrawlersInstanceLoader;
 import co.fun.code.funcorpchallengeservice.crawler.strategy.MergeAggregationStrategy;
 import co.fun.code.funcorpchallengeservice.model.IFeedRecordFilter;
 import co.fun.code.funcorpchallengeservice.model.IFeedRecordsStorage;
@@ -34,7 +37,6 @@ public class CrawlersMainRouteBuilder extends RouteBuilder {
   private final IFeedRecordsStorage feedRecordsStorage;
   private final IFeedRecordFilter filter;
   private final ICrawlerInstanceLoaderFactory loaderFactory;
-  private final IMediaSourceStateStorage stateStorage;
   private final ICrawlerInstanceStorer crawlerInstanceStorer;
   private final IMediaStorage mediaStorage;
 
@@ -57,13 +59,11 @@ public class CrawlersMainRouteBuilder extends RouteBuilder {
   @Autowired
   public CrawlersMainRouteBuilder(IFeedRecordsStorage feedRecordsStorage,
                                   IFeedRecordFilter filter,
-                                  IMediaSourceStateStorage stateStorage,
                                   ICrawlerInstanceLoaderFactory loaderFactory,
                                   ICrawlerInstanceStorer crawlerInstanceStorer,
                                   IMediaStorage mediaStorage) {
     this.feedRecordsStorage = feedRecordsStorage;
     this.filter = filter;
-    this.stateStorage = stateStorage;
     this.loaderFactory = loaderFactory;
     this.crawlerInstanceStorer = crawlerInstanceStorer;
     this.mediaStorage = mediaStorage;
@@ -137,7 +137,7 @@ public class CrawlersMainRouteBuilder extends RouteBuilder {
         log.info("create crawler route, params: {}", params);
         if (params.getRequestIntervalMsec() > 0 && !StringUtils.isEmpty(params.getSourceId())) {
           long delay = params.getStartDelayMsec() >= 0 ? params.getStartDelayMsec() : 0;
-          from(String.format("timer?period=%s&repeatCount=1&delay=%s", params.getRequestIntervalMsec(), delay))
+          from(String.format("timer?period=%s&delay=%s", params.getRequestIntervalMsec(), delay))
             .log(LoggingLevel.INFO, String.format("start timer routine for crawler id: %s", params.getSourceId()))
             .setHeader(HeadersDefinition.MEDIA_SOURCE_ID, constant(params.getSourceId()))
             .process(exchange -> {

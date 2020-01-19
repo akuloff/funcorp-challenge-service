@@ -83,18 +83,28 @@ public class GiphyRouteBuilder extends RouteBuilder {
               mediaSourceState = MediaSourceState.builder()
                 .id(sourceId)
                 .lastCallTimestamp(System.currentTimeMillis())
+                .lastPage(0)
                 .build();
-              msg.setHeader(HeadersDefinition.MEDIA_SOURCE_STATE, mediaSourceState);
             }
             if (crawlerParams.getApiConnection() != null) {
               String apiUrl = API_URL;
               if (!StringUtils.isEmpty(crawlerParams.getApiConnection().getApiUrl())) {
                 apiUrl = crawlerParams.getApiConnection().getApiUrl();
               }
-              String requestUrl = String.format("%s?api_key=%s&q=%s&lang=%s", apiUrl,
-                crawlerParams.getApiConnection().getApiKey(), crawlerParams.getSearchQuery(), crawlerParams.getLanguage());
+              String requestUrl = String.format("%s?api_key=%s&lang=%s", apiUrl,
+                crawlerParams.getApiConnection().getApiKey(), crawlerParams.getLanguage());
+              if (!StringUtils.isEmpty(crawlerParams.getSearchQuery())){
+                requestUrl = requestUrl + String.format("&q=%s", crawlerParams.getSearchQuery());
+              }
+              if (crawlerParams.isDeepScan() ) {
+                if (mediaSourceState.getLastPage() > 0) {
+                  requestUrl = requestUrl + String.format("&offset=%s", (mediaSourceState.getLastPage() * 25));
+                }
+                mediaSourceState.setLastPage(mediaSourceState.getLastPage() + 1);
+              }
               msg.setHeader(FULL_REQUEST_URL, requestUrl);
               doProcess = true;
+              msg.setHeader(HeadersDefinition.MEDIA_SOURCE_STATE, mediaSourceState);
             }
           } else {
             log.warn("can not read crawler params from storer, sourceId: {}", sourceId);
@@ -105,7 +115,7 @@ public class GiphyRouteBuilder extends RouteBuilder {
       })
       .choice()
         .when(header(DO_PROCESS))
-          .log(LoggingLevel.INFO, "send request to Giphy ...")
+          .log(LoggingLevel.INFO, String.format("send request to Giphy, url: ${headers.%s}", FULL_REQUEST_URL))
           .toD(String.format("${headers.%s}", FULL_REQUEST_URL))
           .convertBodyTo(String.class)
           .process(exchange -> {
@@ -117,6 +127,14 @@ public class GiphyRouteBuilder extends RouteBuilder {
               recordList.add(feedRecordFromData(exchange, crawlerParams, data));
             }
             exchange.getIn().setBody(recordList);
+            MediaSourceState mediaSourceState = exchange.getIn().getHeader(HeadersDefinition.MEDIA_SOURCE_STATE, MediaSourceState.class);
+            if (mediaSourceState != null && crawlerParams.isDeepScan()) {
+              long totalOffset = mediaSourceState.getLastPage() * 25;
+              if (response.getPagination().getTotalCount() - totalOffset < 25) {
+                mediaSourceState.setLastPage(0);
+                exchange.getIn().setHeader(HeadersDefinition.MEDIA_SOURCE_STATE, mediaSourceState);
+              }
+            }
           })
           .to("direct:send-records-list-to-storage")
       .endChoice()

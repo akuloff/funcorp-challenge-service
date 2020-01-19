@@ -24,6 +24,31 @@
     }
   },
   {
+    "type": "giphy",
+    "channel": null,
+    "language": "de",
+    "tags": [
+      "tag1",
+      "tag2"
+    ],
+    "source-id": "giphy_trending1",
+    "interval": 5000,
+    "start-delay": 1500,
+    "max-records": 100,
+    "max-days": 5,
+    "deep-scan": false,
+    "deep-scan-days": 0,
+    "deep-scan-records": 25,
+    "deep-scan-interval": 0,
+    "api-connection": {
+      "api-key": "ZMR6tIn2HZsciJki34z1jABtC2Fdxf7X",
+      "client-id": null,
+      "user-name": null,
+      "user-passwd": null,
+      "api-url": "http://api.giphy.com/v1/gifs/trending"
+    }
+  },
+  {
     "type": "coub",
     "channel": null,
     "language": "de",
